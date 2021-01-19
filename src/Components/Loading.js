@@ -1,9 +1,9 @@
 import React from 'react'
-
+import img from './../assets/img/loading.gif'
 export default function Loading() {
     return (
-        <h4>
-            loading ...
-        </h4>
+        <div>
+            <img src={img} alt='loading' />
+        </div>
     )
 }

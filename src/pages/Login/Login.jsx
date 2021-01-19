@@ -3,8 +3,8 @@ import React, { useState, useLayoutEffect, useEffect } from "react";
 import Loading from "./../../Components/Loading";
 import Error from "./../../Components/Error";
 import { useAuthDispatch, useAuthState } from "../../Context/auth-context";
-import { actionTypes } from "../../Context/reducer";
 import "./style.css";
+import * as actionCreator from './../../Context/action';
 
 const fetchToken = async (username, password) => {
   return axios
@@ -30,20 +30,20 @@ export default function Login() {
 
   const handlelogin = (e) => {
     e.preventDefault();
-    dispatch({ type: actionTypes.LOGIN_REQUEST });
+    dispatch( actionCreator.loginRequest() );
     fetchToken(username, password).then(({ success, data }) => {
       if (success) {
         setToken(data);
       }
       else{
-        dispatch({ type : actionTypes.LOGIN_ERROR, payload : { error : 'error' } } )
+        dispatch( actionCreator.loginError('failed login') );
       }
     });
   };
   useLayoutEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
-      dispatch({ type: actionTypes.LOGIN_REQUEST });
+      dispatch( actionCreator.loginRequest() );
       setToken(token);
     }
   }, [dispatch]);
@@ -53,13 +53,7 @@ export default function Login() {
       fetchCurrentUserInfo(token).then(({ success, data }) => {
         if (success) {
           localStorage.setItem("token", token);
-          dispatch({
-            type: actionTypes.LOGIN_SUCCESS,
-            payload: {
-              user: data,
-              token,
-            },
-          });
+          dispatch( actionCreator.loginSuccess(data, token) );
         }
       });
     }
